@@ -1,0 +1,4 @@
+{
+  // Pasta de testes aberta pelo F5. Opções: "copilotStudio" (padrão), "copilotWeb" (ponte manual), "m365" (API, requer consentimento) ou "mock".
+  "delpCopilot.provider": "copilotStudio"
+}

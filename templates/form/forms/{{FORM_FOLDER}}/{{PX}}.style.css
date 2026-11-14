@@ -1,0 +1,288 @@
+/* =============================================================================
+   {{TITULO}} - {{PX}}.style.css
+   -----------------------------------------------------------------------------
+   BEM com prefixo "{{PX}}-" (bloco__elemento--modificador). Tokens declarados no
+   bloco raiz ".{{PX}}" (nao em :root) para nao vazar para o portal Fluig; os
+   seletores ficam sob ".{{PX}}" para vencer o Fluig Style Guide sem !important.
+
+   Padrao visual DELP:
+     - Tipografia: Barlow Medium (500); fallback Inter, system-ui. A fonte nao e
+       carregada por CDN externo: usa a instalada/hospedada no servidor.
+     - Delp Red #CC0F10 so em destaques, acoes principais e erros (nunca fundo
+       de bloco de texto). Neutros: #FFFFFF, #EAE5DF, #B0B0B0, #000000.
+     - Semantica: ok = Servicos #0B861D | aviso = Industria #FF6B05 (so borda/icone,
+       nao texto: contraste baixo no branco) | erro = Red | info = Subsea #2362D3.
+     - Contraste WCAG AA: Red/branco 5,9:1; preto/#EAE5DF 17:1.
+
+   Historico:
+     v1.0 - {{DATA}} - criacao
+
+   Indice: 1 Tokens  2 Base  3 Cabecalho  4 Secoes  5 Campos  6 Botoes
+           7 Pai-filho  8 Erros (modal)  9 Responsivo
+   ========================================================================== */
+
+/* 1. Tokens ---------------------------------------------------------------- */
+.{{PX}} {
+  --{{PX}}-red: #CC0F10;
+  --{{PX}}-black: #000000;
+  --{{PX}}-white: #FFFFFF;
+  --{{PX}}-sand: #EAE5DF;
+  --{{PX}}-gray: #B0B0B0;
+  --{{PX}}-ok: #0B861D;
+  --{{PX}}-aviso: #FF6B05;
+  --{{PX}}-info: #2362D3;
+
+  --{{PX}}-text: var(--{{PX}}-black);
+  --{{PX}}-text-muted: rgba(0, 0, 0, 0.66);
+  --{{PX}}-line: rgba(176, 176, 176, 0.6);
+  --{{PX}}-red-soft: rgba(204, 15, 16, 0.07);
+  --{{PX}}-red-ring: rgba(204, 15, 16, 0.28);
+  --{{PX}}-info-ring: rgba(35, 98, 211, 0.28);
+
+  --{{PX}}-font: 'Barlow', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --{{PX}}-radius: 12px;
+  --{{PX}}-radius-sm: 7px;
+  --{{PX}}-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --{{PX}}-gap: 20px;
+
+  font-family: var(--{{PX}}-font);
+  font-weight: 500;
+  color: var(--{{PX}}-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 2. Base ------------------------------------------------------------------ */
+.{{PX}} *,
+.{{PX}} *::before,
+.{{PX}} *::after { box-sizing: border-box; }
+
+.{{PX}} button,
+.{{PX}} input,
+.{{PX}} select,
+.{{PX}} textarea { font-family: var(--{{PX}}-font); }
+
+.{{PX}} [hidden] { display: none !important; }
+
+.{{PX}} .{{PX}}-form {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--{{PX}}-sand);
+}
+
+.{{PX}} .{{PX}}-app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+}
+
+.{{PX}} .{{PX}}-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* 3. Cabecalho ------------------------------------------------------------- */
+.{{PX}} .{{PX}}-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  margin-bottom: var(--{{PX}}-gap);
+  background: var(--{{PX}}-white);
+  border-radius: var(--{{PX}}-radius);
+  box-shadow: var(--{{PX}}-shadow);
+}
+.{{PX}} .{{PX}}-header__mark {
+  flex: 0 0 6px;
+  height: 44px;
+  border-radius: 3px;
+  background: var(--{{PX}}-red);
+}
+.{{PX}} .{{PX}}-header__eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--{{PX}}-text-muted);
+}
+.{{PX}} .{{PX}}-header__title {
+  margin: 2px 0 0;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--{{PX}}-text);
+}
+
+/* 4. Secoes ---------------------------------------------------------------- */
+.{{PX}} .{{PX}}-section {
+  margin-bottom: var(--{{PX}}-gap);
+  padding: 20px;
+  background: var(--{{PX}}-white);
+  border-radius: var(--{{PX}}-radius);
+  box-shadow: var(--{{PX}}-shadow);
+}
+.{{PX}} .{{PX}}-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.{{PX}} .{{PX}}-section__title {
+  margin: 0 0 12px;
+  padding-left: 10px;
+  border-left: 3px solid var(--{{PX}}-red);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--{{PX}}-text);
+}
+.{{PX}} .{{PX}}-section__head .{{PX}}-section__title { margin-bottom: 0; }
+.{{PX}} .{{PX}}-section--bloqueada .{{PX}}-section__title { border-left-color: var(--{{PX}}-gray); }
+
+.{{PX}} .{{PX}}-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 4px 16px;
+}
+
+/* 5. Campos ---------------------------------------------------------------- */
+.{{PX}} .{{PX}}-field { margin-bottom: 12px; min-width: 0; }
+.{{PX}} .{{PX}}-field--full { grid-column: 1 / -1; }
+
+.{{PX}} .{{PX}}-field__label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--{{PX}}-text);
+}
+.{{PX}} .{{PX}}-field__label--obrigatorio::after {
+  content: ' *';
+  color: var(--{{PX}}-red);
+}
+
+.{{PX}} .form-control {
+  border-color: var(--{{PX}}-line);
+  border-radius: var(--{{PX}}-radius-sm);
+  color: var(--{{PX}}-text);
+}
+.{{PX}} .form-control:focus {
+  border-color: var(--{{PX}}-info);
+  box-shadow: 0 0 0 3px var(--{{PX}}-info-ring);
+  outline: none;
+}
+.{{PX}} .form-control[disabled],
+.{{PX}} .form-control[readonly] {
+  background: var(--{{PX}}-sand);
+  color: var(--{{PX}}-text);
+  cursor: not-allowed;
+}
+
+/* campo invalido (marcado pelo {{PX}}.validator.js) */
+.{{PX}} .{{PX}}-field--invalido .form-control,
+.{{PX}} .{{PX}}-field--invalido .select2-selection,
+.{{PX}} .{{PX}}-field--invalido.{{PX}}-table-wrap {
+  border-color: var(--{{PX}}-red);
+  box-shadow: 0 0 0 3px var(--{{PX}}-red-ring);
+}
+.{{PX}} .{{PX}}-field--invalido .{{PX}}-field__label { color: var(--{{PX}}-red); }
+
+.{{PX}} .{{PX}}-total {
+  margin: 12px 0 0;
+  text-align: right;
+  color: var(--{{PX}}-text-muted);
+}
+.{{PX}} .{{PX}}-total__valor {
+  display: inline;
+  padding: 0;
+  min-height: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--{{PX}}-text);
+}
+
+/* 6. Botoes ---------------------------------------------------------------- */
+.{{PX}} .{{PX}}-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--{{PX}}-radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.{{PX}} .{{PX}}-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--{{PX}}-info-ring); }
+
+.{{PX}} .{{PX}}-btn--primary { background: var(--{{PX}}-red); border-color: var(--{{PX}}-red); color: var(--{{PX}}-white); }
+.{{PX}} .{{PX}}-btn--primary:hover { box-shadow: 0 0 0 3px var(--{{PX}}-red-ring); }
+
+.{{PX}} .{{PX}}-btn--icon {
+  width: 32px;
+  min-height: 32px;
+  padding: 0;
+  background: var(--{{PX}}-white);
+  border-color: var(--{{PX}}-line);
+  color: var(--{{PX}}-red);
+  font-size: 20px;
+}
+.{{PX}} .{{PX}}-btn--icon:hover { background: var(--{{PX}}-red-soft); border-color: var(--{{PX}}-red); }
+
+/* 7. Pai-filho ------------------------------------------------------------- */
+.{{PX}} .{{PX}}-table-wrap {
+  width: 100%;
+  margin: 0;
+  overflow-x: auto;
+  border: 1px solid var(--{{PX}}-line);
+  border-radius: var(--{{PX}}-radius-sm);
+}
+.{{PX}} .{{PX}}-table { width: 100%; min-width: 560px; margin: 0; border-collapse: collapse; }
+.{{PX}} .{{PX}}-table th {
+  padding: 10px 8px;
+  background: var(--{{PX}}-sand);
+  border-bottom: 1px solid var(--{{PX}}-line);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  color: var(--{{PX}}-text);
+}
+.{{PX}} .{{PX}}-table td { padding: 8px; vertical-align: middle; border-top: 1px solid var(--{{PX}}-line); }
+.{{PX}} .{{PX}}-table__acao { width: 48px; text-align: center; }
+
+/* 8. Erros (conteudo do FLUIGC.modal) ------------------------------------- */
+.{{PX}}-errors__intro { margin: 0 0 12px; color: var(--{{PX}}-text-muted); }
+.{{PX}}-errors__group { margin-bottom: 12px; padding: 12px 14px; border-left: 3px solid var(--{{PX}}-red); background: var(--{{PX}}-red-soft); border-radius: var(--{{PX}}-radius-sm); }
+.{{PX}}-errors__title { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--{{PX}}-text); }
+.{{PX}}-errors__count {
+  display: inline-block;
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 11px;
+  background: var(--{{PX}}-red);
+  color: var(--{{PX}}-white);
+  font-size: 12px;
+  text-align: center;
+}
+.{{PX}}-errors__list { margin: 0; padding-left: 18px; }
+.{{PX}}-errors__item { margin: 2px 0; }
+
+/* 9. Responsivo ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  .{{PX}} .{{PX}}-app { padding: 12px 16px 32px; }
+  .{{PX}} .{{PX}}-header { padding: 12px 14px; }
+  .{{PX}} .{{PX}}-header__title { font-size: 21px; }
+  .{{PX}} .{{PX}}-section { padding: 14px; }
+  .{{PX}} .{{PX}}-section__head { flex-wrap: wrap; }
+  .{{PX}} .{{PX}}-section__head .{{PX}}-btn { width: 100%; }
+  .{{PX}} .{{PX}}-total { text-align: left; }
+}

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{TITULO}}</title>
+
+    <!-- Plataforma Fluig (recursos do proprio servidor; nao usar CDN externo) -->
+    <link type="text/css" rel="stylesheet" href="/portal/resources/style-guide/css/fluig-style-guide.min.css" />
+    <script type="text/javascript" src="/portal/resources/js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
+    <script type="text/javascript" src="/portal/resources/style-guide/js/fluig-style-guide.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>
+
+    <!-- Estilo do formulario (BEM, prefixo {{PX}}-) -->
+    <link rel="stylesheet" type="text/css" href="{{PX}}.style.css">
+</head>
+
+<body>
+    <div class="fluig-style-guide {{PX}}">
+        <form name="form" role="form" class="{{PX}}-form">
+
+            <!-- ================================================================
+                 CAMPOS OCULTOS DE CONTROLE
+                 Preenchidos por events/displayFields.js e lidos pelo workflow.
+                 NAO renomear nem duplicar (cada name aparece uma unica vez).
+                   ATIVIDADE          WKNumState da atividade atual
+                   NUMPROCESSO        WKNumProces (numero da solicitacao)
+                   SOLICITANTE        login de quem abriu (atividade inicial)
+                   EMAIL_SOLICITANTE  e-mail de quem abriu (atividade inicial)
+                   USUARIOATUAL       login de quem esta com a tarefa
+                   TYPEVIEW           1 = modo visualizacao, 0 = edicao
+                 ================================================================ -->
+            <input type="hidden" id="ATIVIDADE" name="ATIVIDADE">
+            <input type="hidden" id="NUMPROCESSO" name="NUMPROCESSO">
+            <input type="hidden" id="SOLICITANTE" name="SOLICITANTE">
+            <input type="hidden" id="EMAIL_SOLICITANTE" name="EMAIL_SOLICITANTE">
+            <input type="hidden" id="USUARIOATUAL" name="USUARIOATUAL">
+            <input type="hidden" id="TYPEVIEW" name="TYPEVIEW">
+
+            <div class="{{PX}}-app">
+
+                <!-- ============================== CABECALHO -->
+                <header class="{{PX}}-header">
+                    <span class="{{PX}}-header__mark" aria-hidden="true"></span>
+                    <div>
+                        <p class="{{PX}}-header__eyebrow">Delp</p>
+                        <h1 class="{{PX}}-header__title">{{TITULO}}</h1>
+                    </div>
+                </header>
+
+                <!-- ============================== DADOS DA SOLICITACAO -->
+                <section id="secDados" class="{{PX}}-section" data-titulo="Dados da solicitação">
+                    <h2 class="{{PX}}-section__title">Dados da solicitação</h2>
+                    <div class="{{PX}}-grid">
+                        <div class="form-group {{PX}}-field">
+                            <label class="{{PX}}-field__label {{PX}}-field__label--obrigatorio" for="DATA_SOLICITACAO">Data da solicitação</label>
+                            <input required type="date" class="form-control" id="DATA_SOLICITACAO" name="DATA_SOLICITACAO" aria-label="Data da solicitação">
+                        </div>
+
+                        <div class="form-group {{PX}}-field">
+                            <label class="{{PX}}-field__label {{PX}}-field__label--obrigatorio" for="VALOR_ESTIMADO">Valor estimado</label>
+                            <input required type="text" inputmode="decimal" class="form-control" id="VALOR_ESTIMADO" name="VALOR_ESTIMADO" data-mask="moeda" placeholder="R$ 0,00" aria-label="Valor estimado">
+                        </div>
+
+                        <!-- Zoom de exemplo: zoom visivel + hidden com a chave.
+                             TROQUE dsExemplo{{PX_UPPER}} pelo dataset real e ajuste displayKey/fields.
+                             O mapeamento zoom -> hidden fica em {{PX_UPPER}}.Config.ZOOMS ({{PX}}.core.js).
+                             Filtro dinamico: reloadZoomFilterValues("CENTROCUSTO", "COLUNA," + valor) -->
+                        <div class="form-group {{PX}}-field">
+                            <label class="{{PX}}-field__label {{PX}}-field__label--obrigatorio" for="CENTROCUSTO">Centro de custo</label>
+                            <input required type="zoom" class="form-control" id="CENTROCUSTO" name="CENTROCUSTO" placeholder="Selecione o centro de custo" aria-label="Centro de custo"
+                                data-zoom="{
+                                    'displayKey':'DESCRICAO',
+                                    'datasetId':'dsExemplo{{PX_UPPER}}',
+                                    'maximumSelectionLength':'1',
+                                    'fields':[
+                                        {'field':'CODCCUSTO','label':'Código','standard':'true'},
+                                        {'field':'DESCRICAO','label':'Descrição','search':'true'}
+                                    ]
+                                }">
+                            <input type="hidden" id="CODCCUSTO" name="CODCCUSTO">
+                        </div>
+
+                        <div class="form-group {{PX}}-field {{PX}}-field--full">
+                            <label class="{{PX}}-field__label {{PX}}-field__label--obrigatorio" for="DESCRICAO">Descrição / justificativa</label>
+                            <textarea required class="form-control" rows="3" id="DESCRICAO" name="DESCRICAO" maxlength="2000" aria-label="Descrição / justificativa"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============================== ITENS (PAI-FILHO)
+                     1a linha do tbody = template (o Fluig oculta e clona; ids viram CAMPO___<seq>).
+                     Botoes proprios type="button" com data-acao (nodeletebutton/noaddbutton desligam os nativos).
+                     Todo campo da linha leva o atributo children. -->
+                <section id="secItens" class="{{PX}}-section" data-titulo="Itens">
+                    <div class="{{PX}}-section__head">
+                        <h2 class="{{PX}}-section__title">Itens</h2>
+                        <button type="button" class="{{PX}}-btn {{PX}}-btn--primary" data-acao="adicionar-linha" data-tabela="ITENS" aria-label="Adicionar item">
+                            + Adicionar item
+                        </button>
+                    </div>
+                    <div class="form-group {{PX}}-table-wrap">
+                        <table tablename="ITENS" id="ITENS" class="table {{PX}}-table" nodeletebutton="true" noaddbutton="true">
+                            <thead>
+                                <tr>
+                                    <th class="{{PX}}-table__acao" scope="col"><span class="{{PX}}-sr-only">Ações</span></th>
+                                    <th scope="col">Descrição do item</th>
+                                    <th scope="col">Quantidade</th>
+                                    <th scope="col">Valor unitário</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="{{PX}}-table__acao">
+                                        <button type="button" class="{{PX}}-btn {{PX}}-btn--icon" data-acao="remover-linha" data-tabela="ITENS" aria-label="Remover item" title="Remover item">&times;</button>
+                                    </td>
+                                    <td>
+                                        <input required children type="text" class="form-control" id="ITEM_DESCRICAO" name="ITEM_DESCRICAO" maxlength="200" aria-label="Descrição do item">
+                                    </td>
+                                    <td>
+                                        <input required children type="text" inputmode="decimal" class="form-control" id="ITEM_QUANTIDADE" name="ITEM_QUANTIDADE" data-mask="decimal" aria-label="Quantidade">
+                                    </td>
+                                    <td>
+                                        <input required children type="text" inputmode="decimal" class="form-control" id="ITEM_VALOR" name="ITEM_VALOR" data-mask="moeda" aria-label="Valor unitário">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Texto so exibido: sem name (nao e gravado no card) -->
+                    <p class="{{PX}}-total">Total estimado dos itens: <strong class="form-control-static {{PX}}-total__valor" id="viewTotalItens">R$ 0,00</strong></p>
+                </section>
+
+                <!-- ============================== APROVACAO
+                     Oculta por padrao; exibida a partir da atividade de aprovacao
+                     ({{PX_UPPER}}.Config.SECOES.secAprovacao em {{PX}}.core.js). -->
+                <section id="secAprovacao" class="{{PX}}-section" data-titulo="Aprovação" hidden>
+                    <h2 class="{{PX}}-section__title">Aprovação</h2>
+                    <input type="hidden" id="APROVADOR" name="APROVADOR">
+                    <div class="{{PX}}-grid">
+                        <div class="form-group {{PX}}-field">
+                            <label class="{{PX}}-field__label {{PX}}-field__label--obrigatorio" for="DECISAO_APROVACAO">Decisão</label>
+                            <select required class="form-control" id="DECISAO_APROVACAO" name="DECISAO_APROVACAO" aria-label="Decisão">
+                                <option value="">Selecione</option>
+                                <option value="APROVADO">Aprovar</option>
+                                <option value="REPROVADO">Reprovar</option>
+                            </select>
+                        </div>
+                        <div class="form-group {{PX}}-field {{PX}}-field--full">
+                            <label class="{{PX}}-field__label" for="PARECER_APROVACAO">Parecer (obrigatório ao reprovar)</label>
+                            <textarea class="form-control" rows="3" id="PARECER_APROVACAO" name="PARECER_APROVACAO" maxlength="2000" aria-label="Parecer"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- ============================== SCRIPTS (ordem importa: core -> dataset -> mask -> validator -> app) -->
+            <script type="text/javascript" src="{{PX}}.core.js"></script>
+            <script type="text/javascript" src="{{PX}}.dataset.js"></script>
+            <script type="text/javascript" src="{{PX}}.mask.js"></script>
+            <script type="text/javascript" src="{{PX}}.validator.js"></script>
+            <script type="text/javascript" src="{{PX}}.app.js"></script>
+        </form>
+    </div>
+</body>
+
+</html>

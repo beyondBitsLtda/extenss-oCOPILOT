@@ -1,0 +1,63 @@
+application.type=widget
+application.code={{CODE}}
+application.title={{CODE}}
+application.description={{TITULO_ASCII}} DELP - {{DESCRICAO_ASCII}}
+application.category=SYSTEM
+application.renderer=freemarker
+developer.code={{DEV_CODE}}
+developer.name={{DEV_NAME}}
+developer.url=http://www.fluig.com
+application.uiwidget=true
+application.mobileapp=false
+application.version=1.0.0
+view.file=view.ftl
+edit.file=edit.ftl
+locale.file.base.name={{CODE}}
+
+# =============================================================================
+# {{TITULO_ASCII}} DELP - widget {{CODE}}  (v1.0.0 - {{DATA}} - criacao)
+# -----------------------------------------------------------------------------
+# REGRAS DESTE ARQUIVO
+#   - E um .properties: o Fluig le em ISO-8859-1. Escreva SEM acento.
+#   - application.code = nome do "var" do main.function.js = nome da pasta
+#     em wcm/widget = context-root do jboss-web.xml.
+#   - application.version e {{NS}}.VERSAO (Objects.js) andam juntos e SOBEM a
+#     cada publicacao: js/css ficam em cache atrelado a versao, o view.ftl nao.
+#   - Chave repetida = a ultima vence e o recurso anterior some em silencio.
+#     Numeracao continua, sem buraco e sem repeticao.
+#
+# ORDEM DE CARGA = ORDEM DE DEPENDENCIA (trocar quebra a widget)
+#   1    bibliotecas de terceiros (resources/js/lib) - SEMPRE antes do nucleo;
+#        nova lib entra aqui e renumera o restante
+#   2-4  nucleo: namespace/classes, kit de UI, matriz de permissoes
+#   5    chartHelper.js (graficos no padrao DELP - depende de Chart.js e Objects)
+#   6    camada de dados front (um arquivo por dataset, mesmo nome do dataset)
+#   7    modulos de tela (integre*.js - consomem dados, kit de UI e graficos)
+#   8    Controller (navegacao, boot, splash, tela cheia)
+#   9    main.function.js (SuperWidget - ponto de entrada, ULTIMO de todos)
+#   CSS  folha principal; extras/overrides depois dela
+# NENHUM arquivo pode ser carregado fora desta lista.
+# =============================================================================
+
+# --- bibliotecas de terceiros (locais, nunca CDN) ---
+application.resource.js.1=/resources/js/lib/chart.umd.min.js
+
+# --- nucleo ---
+application.resource.js.2=/resources/js/Objects.js
+application.resource.js.3=/resources/js/Componentes.js
+application.resource.js.4=/resources/js/Permissoes.js
+# graficos: ponto UNICO (paleta DELP validada); nenhum modulo usa "new Chart" direto
+application.resource.js.5=/resources/js/chartHelper.js
+
+# --- camada de dados (front) ---
+application.resource.js.6=/resources/js/{{DATASET}}.js
+
+# --- modulos de tela ---
+application.resource.js.7=/resources/js/integreInicio.js
+
+# --- orquestracao ---
+application.resource.js.8=/resources/js/Controller.js
+application.resource.js.9=/resources/js/main.function.js
+
+# --- estilos (overrides por ultimo) ---
+application.resource.css.1=/resources/css/{{NS}}.css

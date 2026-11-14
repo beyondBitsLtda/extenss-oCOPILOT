@@ -1,0 +1,404 @@
+{
+  "name": "delp-copilot",
+  "displayName": "Delp Copilot",
+  "description": "Assistente de código interno da Delp usando a licença Microsoft 365 Copilot (Copilot Chat API).",
+  "version": "0.7.0",
+  "publisher": "delp",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "AI",
+    "Programming Languages"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "delpCopilot",
+          "title": "Delp Copilot",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "delpCopilot": [
+        {
+          "type": "webview",
+          "id": "delpCopilot.chat",
+          "name": "Chat"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "delpCopilot.openChat",
+        "title": "Abrir chat",
+        "category": "Delp Copilot",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "delpCopilot.newChat",
+        "title": "Nova conversa",
+        "category": "Delp Copilot",
+        "icon": "$(add)"
+      },
+      {
+        "command": "delpCopilot.explain",
+        "title": "Explicar código",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.refactor",
+        "title": "Refatorar",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.generateTests",
+        "title": "Gerar testes",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.document",
+        "title": "Documentar",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.fix",
+        "title": "Corrigir problemas",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.generate",
+        "title": "Gerar código no cursor...",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.askSelection",
+        "title": "Perguntar sobre a seleção...",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.attachFiles",
+        "title": "Anexar ao chat",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.pasteReply",
+        "title": "Colar resposta do Copilot",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.signIn",
+        "title": "Entrar com a conta Microsoft 365",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.switchModel",
+        "title": "Trocar modelo",
+        "category": "Delp Copilot",
+        "icon": "$(symbol-misc)"
+      },
+      {
+        "command": "delpCopilot.addModel",
+        "title": "Adicionar modelo (agente do Copilot Studio)",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.showUsage",
+        "title": "Ver consumo",
+        "category": "Delp Copilot",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "delpCopilot.fluig.newWidget",
+        "title": "Novo widget Fluig",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.fluig.newForm",
+        "title": "Novo formulário Fluig",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.fluig.newDataset",
+        "title": "Novo dataset Fluig",
+        "category": "Delp Copilot"
+      },
+      {
+        "command": "delpCopilot.history",
+        "title": "Histórico de conversas",
+        "category": "Delp Copilot",
+        "icon": "$(history)"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "delpCopilot.editorMenu",
+        "label": "Delp Copilot"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "delpCopilot.attachFiles",
+          "when": "!explorerResourceIsFolder",
+          "group": "0_delpCopilot"
+        }
+      ],
+      "editor/context": [
+        {
+          "submenu": "delpCopilot.editorMenu",
+          "group": "0_delpCopilot"
+        }
+      ],
+      "delpCopilot.editorMenu": [
+        {
+          "command": "delpCopilot.explain",
+          "group": "1_understand@1"
+        },
+        {
+          "command": "delpCopilot.askSelection",
+          "group": "1_understand@2"
+        },
+        {
+          "command": "delpCopilot.refactor",
+          "group": "2_change@1"
+        },
+        {
+          "command": "delpCopilot.fix",
+          "group": "2_change@2"
+        },
+        {
+          "command": "delpCopilot.document",
+          "group": "2_change@3"
+        },
+        {
+          "command": "delpCopilot.generateTests",
+          "group": "2_change@4"
+        },
+        {
+          "command": "delpCopilot.generate",
+          "group": "3_generate@1"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "delpCopilot.switchModel",
+          "when": "view == delpCopilot.chat",
+          "group": "navigation@1"
+        },
+        {
+          "command": "delpCopilot.showUsage",
+          "when": "view == delpCopilot.chat",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "delpCopilot.openChat",
+        "key": "ctrl+alt+c",
+        "mac": "cmd+alt+c"
+      },
+      {
+        "command": "delpCopilot.pasteReply",
+        "key": "ctrl+alt+v",
+        "mac": "cmd+alt+v",
+        "when": "delpCopilot.waitingReply"
+      },
+      {
+        "command": "delpCopilot.generate",
+        "key": "ctrl+alt+g",
+        "mac": "cmd+alt+g",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "Delp Copilot",
+      "properties": {
+        "delpCopilot.provider": {
+          "type": "string",
+          "enum": [
+            "copilotStudio",
+            "copilotWeb",
+            "m365",
+            "mock"
+          ],
+          "enumDescriptions": [
+            "Agente do Copilot Studio, automático, com login da conta Delp (permissão CopilotStudio.Copilots.Invoke).",
+            "Copilot Chat no navegador, com ponte manual (copiar/colar). Não exige permissões no Entra ID.",
+            "Microsoft 365 Copilot Chat API, automático (requer consentimento de administrador no Entra ID).",
+            "Simulação local, sem chamadas externas. Útil para testar a interface."
+          ],
+          "default": "copilotStudio",
+          "description": "Provedor de IA usado pela extensão."
+        },
+        "delpCopilot.studio.agents": {
+          "type": "array",
+          "default": [
+            {
+              "label": "Claude Opus 4.8",
+              "connectionString": "https://default087a74d85ae14e3dae04f3857de214.bc.environment.api.powerplatform.com/copilotstudio/dataverse-backed/authenticated/bots/cr5d2_DelpCopilotCodigo/conversations?api-version=2022-03-01-preview"
+            }
+          ],
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "connectionString"
+            ],
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Nome exibido no seletor (normalmente o modelo do agente)."
+              },
+              "connectionString": {
+                "type": "string",
+                "description": "Cadeia de conexão do agente (SDK de Agentes do Microsoft 365)."
+              }
+            }
+          },
+          "description": "Agentes do Copilot Studio disponíveis no seletor de modelo. No Copilot Studio o modelo é fixado por agente: crie um agente por modelo (mesmas instruções) e cadastre aqui, ou use o comando \"Delp Copilot: Adicionar modelo\"."
+        },
+        "delpCopilot.studio.activeAgent": {
+          "type": "string",
+          "default": "Claude Opus 4.8",
+          "description": "Rótulo do agente/modelo ativo (de delpCopilot.studio.agents)."
+        },
+        "delpCopilot.agent.autoApply": {
+          "type": "boolean",
+          "default": false,
+          "description": "Aplica e salva as edições do agente sem pedir confirmação. Cada aplicação ganha um botão \"Desfazer\" no chat."
+        },
+        "delpCopilot.usage.dailyTokenLimit": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Limite diário de tokens (estimado). Ao atingir, a extensão pede confirmação antes de enviar. 0 = sem limite."
+        },
+        "delpCopilot.web.url": {
+          "type": "string",
+          "default": "https://m365.cloud.microsoft/chat",
+          "description": "Endereço do Copilot Chat aberto no navegador pelo provedor Copilot Web."
+        },
+        "delpCopilot.auth.clientId": {
+          "type": "string",
+          "default": "06d98651-6cf9-4b9d-8fb6-31d030aaef99",
+          "description": "Application (client) ID do app registrado no Entra ID da Delp."
+        },
+        "delpCopilot.auth.tenantId": {
+          "type": "string",
+          "default": "087a74d8-5ae1-4e3d-ae04-f3857de214bc",
+          "description": "Directory (tenant) ID da Delp. Vazio = 'organizations'."
+        },
+        "delpCopilot.m365.webSearch": {
+          "type": "boolean",
+          "default": false,
+          "description": "Permite que o Copilot use busca na web como fonte. Desligado por padrão para evitar que trechos de código componham consultas externas."
+        },
+        "delpCopilot.m365.streaming": {
+          "type": "boolean",
+          "default": true,
+          "description": "Exibe a resposta progressivamente (endpoint chatOverStream)."
+        },
+        "delpCopilot.m365.contextMode": {
+          "type": "string",
+          "enum": [
+            "inline",
+            "additionalContext"
+          ],
+          "enumDescriptions": [
+            "O código vai junto no texto da mensagem (mais confiável).",
+            "O código vai no campo additionalContext da API (mensagem mais curta)."
+          ],
+          "default": "inline",
+          "description": "Como o código do editor é enviado ao Copilot."
+        },
+        "delpCopilot.timeZone": {
+          "type": "string",
+          "default": "",
+          "description": "Fuso horário IANA enviado à API (ex.: America/Sao_Paulo). Vazio = fuso do sistema."
+        },
+        "delpCopilot.maxContextChars": {
+          "type": "number",
+          "default": 40000,
+          "minimum": 1000,
+          "description": "Tamanho máximo (em caracteres) de cada arquivo enviado como contexto."
+        },
+        "delpCopilot.knowledge.fluig": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "always",
+            "never"
+          ],
+          "enumDescriptions": [
+            "Envia o guia Fluig quando o workspace parece um projeto Fluig (wcm, forms, datasets, workflow...).",
+            "Sempre envia o guia Fluig.",
+            "Nunca envia o guia Fluig."
+          ],
+          "default": "auto",
+          "description": "Quando enviar o guia de arquitetura Fluig da Delp ao agente."
+        },
+        "delpCopilot.knowledge.projectFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "DELP-COPILOT.md",
+            "CLAUDE.md",
+            "GITO.md"
+          ],
+          "description": "Arquivos da raiz do projeto enviados ao agente como instruções na primeira mensagem de cada conversa."
+        },
+        "delpCopilot.studio.timeoutSeconds": {
+          "type": "number",
+          "default": 300,
+          "minimum": 60,
+          "description": "Tempo máximo (segundos) que a extensão espera SEM nenhum sinal do agente antes de desistir. Renovado a cada parte da resposta recebida; teto absoluto de 20 minutos por resposta."
+        },
+        "delpCopilot.fluig.datasource": {
+          "type": "string",
+          "default": "/jdbc/FluigDS",
+          "description": "Datasource (JNDI) usado nos datasets gerados quando o projeto não tem datasets de referência. Padrão da equipe para tabelas Z_DELP_ (RM: /jdbc/FluigDSRM)."
+        },
+        "delpCopilot.fluig.database": {
+          "type": "string",
+          "default": "FLUIG",
+          "description": "Base usada para qualificar as tabelas dos datasets e scripts SQL gerados (ex.: FLUIG.dbo.Z_DELP_...), quando o projeto não tem datasets de referência."
+        },
+        "delpCopilot.fluig.developerCode": {
+          "type": "string",
+          "default": "DELP0216",
+          "description": "developer.code do application.info das widgets geradas (se o projeto não tiver outra widget de referência)."
+        },
+        "delpCopilot.fluig.developerName": {
+          "type": "string",
+          "default": "",
+          "description": "developer.name do application.info das widgets geradas. Vazio = usuário do Windows."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package --no-dependencies --allow-missing-repository --skip-license",
+    "test": "npm run compile && node test/run-tests.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^3.2.0",
+    "typescript": "^5.6.0"
+  }
+}

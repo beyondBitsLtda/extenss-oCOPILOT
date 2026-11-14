@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--
+  ENSAIO do Addon de Testes do Delp Copilot - abre direto no navegador, sem Fluig.
+  Login, agente e Portal de Testes sao SIMULADOS (simulado.js): nada sai da maquina.
+
+  Parametros na URL:
+    ?abrir=testar | livre   abre o painel no modo indicado
+    &avaliar=1               ja pede a avaliacao do caso (modo testar)
+    &erro=1                  deixa o formulario com o CNPJ invalido marcado
+    &login=0                 comeca deslogado (mostra a tela de login)
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ensaio - Addon de Testes Delp Copilot</title>
+<style>
+    body { margin: 0; font-family: 'Barlow', 'Inter', system-ui, sans-serif; color: #000; background: #EAE5DF; }
+    .topo { padding: 12px 24px; color: #FFF; background: #000; font-weight: 700; }
+    .topo span { color: #B0B0B0; font-weight: 500; margin-left: 8px; }
+    .form { max-width: 760px; margin: 24px auto; padding: 20px 24px; background: #FFF; border-radius: 10px; border-top: 3px solid #CC0F10; }
+    h1 { margin: 0 0 4px; font-size: 22px; }
+    .sub { margin: 0 0 18px; color: rgba(0,0,0,.6); font-size: 14px; }
+    .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; }
+    .form-group label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 600; }
+    .form-group input, .form-group select { width: 100%; height: 34px; padding: 4px 8px; border: 1px solid rgba(0,0,0,.25); border-radius: 6px; font: inherit; box-sizing: border-box; }
+    .has-error input { border-color: #CC0F10; background: rgba(204,15,16,.04); }
+    .help-block { margin-top: 4px; font-size: 12.5px; font-weight: 600; }
+    table { width: 100%; margin-top: 18px; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 6px 8px; border: 1px solid rgba(0,0,0,.12); text-align: left; }
+    th { background: rgba(234,229,223,.6); }
+    .acoes { display: flex; gap: 8px; margin-top: 18px; }
+    .acoes button { height: 34px; padding: 0 16px; border: 1px solid rgba(0,0,0,.25); border-radius: 6px; font: inherit; font-weight: 600; background: #FFF; }
+    .acoes .principal { color: #FFF; background: #CC0F10; border-color: #CC0F10; }
+    @media (max-width: 700px) { .grade { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="topo">Fluig <span>ensaio local - nada e gravado</span></div>
+
+<div class="form" data-delp-copilot-alvo="ensaioFornecedor">
+    <h1>Cadastro de fornecedor</h1>
+    <p class="sub">Formulario de exemplo para testar o addon.</p>
+    <div class="grade">
+        <div class="form-group"><label for="razao">Razao social</label><input id="razao" value="Metalurgica Exemplo Ltda" required></div>
+        <div class="form-group" id="grupo-cnpj"><label for="cnpj">CNPJ</label><input id="cnpj" value="11.222.333/0001-81" required>
+            <div class="help-block" id="msg-cnpj" role="alert" hidden>CNPJ invalido</div></div>
+        <div class="form-group"><label for="email">E-mail do contato</label><input id="email" type="email" value="compras@exemplo.com.br"></div>
+        <div class="form-group"><label for="categoria">Categoria</label>
+            <select id="categoria" required><option value="">Selecione</option><option selected>Materia-prima</option><option>Servicos</option></select></div>
+        <div class="form-group"><label for="senha">Senha do portal do fornecedor</label><input id="senha" type="password" value="segredo123"></div>
+        <div class="form-group"><label><input type="checkbox" id="ativo" checked> Fornecedor ativo</label></div>
+    </div>
+    <table>
+        <thead><tr><th>Codigo</th><th>Item do contrato</th><th>Valor</th></tr></thead>
+        <tbody>
+            <tr><td>053.0001</td><td>Arame de solda ER70S-6</td><td>R$ 18.400,00</td></tr>
+            <tr><td>053.0007</td><td>Eletrodo E7018</td><td>R$ 9.250,00</td></tr>
+        </tbody>
+    </table>
+    <div class="acoes"><button type="button" class="principal">Salvar</button><button type="button">Cancelar</button>
+        <button type="button" data-delp-copilot-abrir="livre">Perguntar ao Delp Copilot</button></div>
+</div>
+
+<script src="simulado.js"></script>
+<script>
+    (function () {
+        var q = new URLSearchParams(location.search);
+        if (q.get('erro') === '1') {
+            document.getElementById('grupo-cnpj').classList.add('has-error');
+            document.getElementById('cnpj').value = '11.222.333/0001-00';
+            document.getElementById('msg-cnpj').hidden = false;
+        }
+        /* comportamento de exemplo do "Salvar" (para o gravador ter o que registrar):
+           CNPJ terminando em -00 = invalido (mensagem + campo com erro); senao chama
+           um dataset (falha fora do Fluig) e estoura um erro de JavaScript */
+        document.querySelector('.acoes .principal').addEventListener('click', function () {
+            var cnpj = document.getElementById('cnpj');
+            var grupo = document.getElementById('grupo-cnpj'), msg = document.getElementById('msg-cnpj');
+            if (/-00$/.test(cnpj.value)) {
+                grupo.classList.add('has-error');
+                msg.hidden = false;
+                console.warn('validacao: CNPJ com digito verificador invalido');
+                return;
+            }
+            grupo.classList.remove('has-error');
+            msg.hidden = true;
+            fetch('/api/public/ecm/dataset/datasets', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: 'dsFornecedorSalvar', constraints: [{ _field: 'CNPJ', _initialValue: cnpj.value }] }) })
+                .then(function (r) { return r.json(); }, function () { return undefined; })
+                .then(function (resp) { var linhas = resp.content.values; return linhas; });   /* defeito proposital: resp indefinido */
+        });
+        window.DELP_COPILOT_ADDON = { simulado: window.ENSAIO_SIMULADO };
+        window.addEventListener('load', function () {
+            var modo = q.get('abrir');
+            if (!modo) return;
+            setTimeout(function () {
+                DelpCopilotAddon.abrir(modo);
+                if (q.get('avaliar') === '1') {
+                    setTimeout(function () {
+                        DelpCopilotAddon.instancia().enviar('Avalie se o resultado que esta na tela agora atende a condicao de aprovacao deste caso.');
+                    }, 1500);
+                }
+            }, 300);
+        });
+    }());
+</script>
+<script src="../delp-copilot-addon.js"></script>
+</body>
+</html>
